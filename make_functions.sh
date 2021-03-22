@@ -17,10 +17,12 @@ _base_image() {
 
 _image_path() {
     BASE_TAG=$1
-    echo "${DOCKER_USERNAME}/${BASE_IMAGE}:${BASE_TAG}"
+    echo "${DOCKER_USERNAME}/charm-base:${BASE_IMAGE}-${BASE_TAG}"
 }
 
 build_image() {
     BASE_TAG=$1
-    "${DOCKER_BIN}" build --build-arg BASE_IMAGE=$(_base_image $BASE_TAG) -t "$(_image_path $BASE_TAG)" -f "Dockerfile-${BASE_IMAGE}" .
+    BASE_IMAGE_PATH=$(_base_image $BASE_TAG)
+    "${DOCKER_BIN}" pull ${BASE_IMAGE_PATH}
+    "${DOCKER_BIN}" build --build-arg BASE_IMAGE=${BASE_IMAGE_PATH} -t "$(_image_path $BASE_TAG)" -f "Dockerfile-${BASE_IMAGE}" .
 }
