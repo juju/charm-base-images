@@ -17,7 +17,12 @@ _base_image() {
 
 _image_path() {
     BASE_TAG=$1
-    echo "${DOCKER_USERNAME}/charm-base:${BASE_IMAGE}-${BASE_TAG}"
+    echo "${DOCKER_USERNAME}/charm-base:$(image_tag $BASE_TAG)"
+}
+
+image_tag() {
+    BASE_TAG=$1
+    echo "${BASE_IMAGE}-${BASE_TAG}"
 }
 
 build_image() {
