@@ -1,0 +1,27 @@
+name: build
+on:
+  pull_request: {}
+jobs:
+  build-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y make
+          wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq &&\
+              chmod +x /usr/bin/yq
+
+      - name: Make build Ubuntu images
+        run: |
+          make build
