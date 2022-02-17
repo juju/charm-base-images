@@ -1,0 +1,35 @@
+images:
+  ubuntu:
+    dockerfile: Dockerfile-ubuntu
+    context: ubuntu-context
+    registry_paths:
+      - jujusolutions/charm-base
+    bases:
+      ubuntu:21.10:
+        name: impish
+        platforms:
+          - linux/arm64
+          - linux/amd64
+          - linux/ppc64le
+          - linux/s390x
+      ubuntu:21.04:
+        name: hirsute
+        platforms:
+          - linux/arm64
+          - linux/amd64
+          - linux/ppc64le
+          - linux/s390x
+      ubuntu:20.04:
+        name: focal
+        platforms:
+          - linux/arm64
+          - linux/amd64
+          - linux/ppc64le
+          - linux/s390x
+      ubuntu:18.04:
+        name: bionic
+        platforms:
+          - linux/arm64
+          - linux/amd64
+          - linux/ppc64le
+          - linux/s390x

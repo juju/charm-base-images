@@ -1,33 +1,46 @@
-#!/bin/sh
+#!/bin/bash
 set -euf
 
-# Docker variables
-DOCKER_USERNAME=${DOCKER_USERNAME:-jujusolutions}
-DOCKER_BIN=${DOCKER_BIN:-$(which docker)}
-BASE_IMAGE=${BASE_IMAGE:-ubuntu}
+_tag_argument_builder() {
+  reg_paths=$1
+  tags=$2
 
-_base_image() {
-    BASE_TAG=$1
-    IMG_linux_amd64="amd64/${BASE_IMAGE}:${BASE_TAG}" \
-    IMG_linux_arm64="arm64v8/${BASE_IMAGE}:${BASE_TAG}" \
-    IMG_linux_ppc64le="ppc64le/${BASE_IMAGE}:${BASE_TAG}" \
-    IMG_linux_s390x="s390x/${BASE_IMAGE}:${BASE_TAG}" \
-    printenv "IMG_$(go env GOOS)_$(go env GOARCH)"
-}
+  output=""
+  for reg_path in ${reg_paths//,/ }; do
+    for tag in ${tags//,/ }; do
+      output="${output} -t ${reg_path}:${tag}"
+    done
+  done
 
-_image_path() {
-    BASE_TAG=$1
-    echo "${DOCKER_USERNAME}/charm-base:$(image_tag $BASE_TAG)"
-}
-
-image_tag() {
-    BASE_TAG=$1
-    echo "${BASE_IMAGE}-${BASE_TAG}"
+  echo "$output"
 }
 
 build_image() {
-    BASE_TAG=$1
-    BASE_IMAGE_PATH=$(_base_image $BASE_TAG)
-    "${DOCKER_BIN}" pull ${BASE_IMAGE_PATH}
-    "${DOCKER_BIN}" build --build-arg BASE_IMAGE=${BASE_IMAGE_PATH} -t "$(_image_path $BASE_TAG)" -f "Dockerfile-${BASE_IMAGE}" .
+  image=${1-""}
+  if [ -z "$image" ]; then
+    echo "You must supply the image to build in images.yaml"
+    exit 1
+  fi
+  output=${2-""}
+  if [ -z "$output" ]; then
+    echo "You must supply the docker buildx output to use for image ${image}"
+    exit 1
+  fi
+
+  dockerfile=$(yq ".images.[\"${image}\"].dockerfile" < images.yaml)
+  context=$(yq ".images.[\"${image}\"].context" < images.yaml)
+  bases=$(yq -o=c  ".images.[\"${image}\"].bases | keys" < images.yaml)
+  reg_paths=$(yq -o=c ".images.[\"${image}\"].registry_paths" < images.yaml)
+
+  echo "Building ${image} images from bases: $bases"
+  for base in ${bases//,/ }; do
+    echo "Building ${image} image for base: ${base}"
+    # Convert any : in to - for the tag
+    tag=${base//:/-}
+    platforms=$(yq -o=c ".images[\"${image}\"].bases.[\"${base}\"].platforms" < images.yaml)
+    tags=$(_tag_argument_builder "$reg_paths" "$tag")
+
+    docker buildx build --platform "${platforms}" --build-arg "BASE_IMAGE=${base}" \
+      -f "$dockerfile" "$context"  ${tags} -o "$output"
+  done
 }
