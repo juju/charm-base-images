@@ -3,8 +3,28 @@ on:
   push:
     branches: master
 jobs:
-  build-docker-images:
+  generate-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y make jq
+          wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq &&\
+          chmod +x /usr/bin/yq
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::{\"image\": $(make images-json)}"
+
+  push-docker-image:
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -29,6 +49,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Make build Ubuntu images
+      - name: Make push image ${{ matrix.image }}
         run: |
-          make push
+          IMAGES=${{ matrix.image }} make push
