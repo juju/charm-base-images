@@ -1,6 +1,17 @@
 #!/bin/bash
 set -euf
 
+_build_args_builder() {
+  build_args=$1
+
+  output=""
+  for build_arg in ${build_args}; do
+    output="${output} --build-arg ${build_args}"
+  done
+
+  echo "$output"
+}
+
 _tag_argument_builder() {
   reg_paths=$1
   tags=$2
@@ -29,18 +40,16 @@ build_image() {
 
   dockerfile=$(yq ".images.[\"${image}\"].dockerfile" < images.yaml)
   context=$(yq ".images.[\"${image}\"].context" < images.yaml)
-  bases=$(yq -o=c  ".images.[\"${image}\"].bases | keys" < images.yaml)
   reg_paths=$(yq -o=c ".images.[\"${image}\"].registry_paths" < images.yaml)
+  tags=$(yq -o=c ".images.[\"${image}\"].tags" < images.yaml)
+  platforms=$(yq -o=c ".images.[\"${image}\"].platforms" < images.yaml)
+  build_args=$(yq -o=t ".images.[\"${image}\"].build_args" < images.yaml)
+  echo "here"
 
-  echo "Building ${image} images from bases: $bases"
-  for base in ${bases//,/ }; do
-    echo "Building ${image} image for base: ${base}"
-    # Convert any : in to - for the tag
-    tag=${base//:/-}
-    platforms=$(yq -o=c ".images[\"${image}\"].bases.[\"${base}\"].platforms" < images.yaml)
-    tags=$(_tag_argument_builder "$reg_paths" "$tag")
+  cmd_build_args=$(_build_args_builder "$build_args")
+  cmd_tags=$(_tag_argument_builder "$reg_paths" "$tags")
 
-    docker buildx build --platform "${platforms}" --build-arg "BASE_IMAGE=${base}" \
-      -f "$dockerfile" "$context"  ${tags} -o "$output"
-  done
+  echo "Building ${image} for build args \"$build_args\" and platforms \"$platforms\""
+  docker buildx build --platform "$platforms" ${cmd_build_args} \
+    -f "$dockerfile" "$context" ${cmd_tags} -o "$output"
 }
