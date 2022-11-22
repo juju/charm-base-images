@@ -1,4 +1,5 @@
 images:
+  # LTS
   ubuntu-22-04:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
@@ -12,39 +13,14 @@ images:
       - linux/amd64
       - linux/ppc64le
       - linux/s390x
+      - linux/riscv64
     build_args:
       - "BASE_IMAGE=ubuntu:22.04"
+    juju_test_channel: 3.0/stable
+    microk8s_test_channel: 1.25-strict/stable
+    series: jammy
 
-  ubuntu-21-10:
-    dockerfile: Dockerfile-ubuntu
-    context: ubuntu-context
-    registry_paths:
-      - jujusolutions/charm-base
-    tags:
-      - ubuntu-21.10
-    platforms:
-      - linux/arm64
-      - linux/amd64
-      - linux/ppc64le
-      - linux/s390x
-    build_args:
-      - "BASE_IMAGE=ubuntu:21.10"
-
-  ubuntu-21-04:
-    dockerfile: Dockerfile-ubuntu
-    context: ubuntu-context
-    registry_paths:
-      - jujusolutions/charm-base
-    tags:
-      - ubuntu-21.04
-    platforms:
-      - linux/arm64
-      - linux/amd64
-      - linux/ppc64le
-      - linux/s390x
-    build_args:
-      - "BASE_IMAGE=ubuntu:21.04"
-
+  # LTS
   ubuntu-20-04:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
@@ -57,9 +33,14 @@ images:
       - linux/amd64
       - linux/ppc64le
       - linux/s390x
+      - linux/riscv64
     build_args:
       - "BASE_IMAGE=ubuntu:20.04"
+    juju_test_channel: 2.9/stable
+    microk8s_test_channel: 1.25/stable
+    series: focal
 
+  # LTS
   ubuntu-18-04:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
@@ -74,3 +55,6 @@ images:
       - linux/s390x
     build_args:
       - "BASE_IMAGE=ubuntu:18.04"
+    juju_test_channel: 2.9/stable
+    microk8s_test_channel: 1.25/stable
+    series: bionic

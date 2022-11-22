@@ -1,0 +1,26 @@
+#!/bin/bash
+set -eux
+status-set maintenance "Testing image..."
+
+python3 --version
+pip3 --version
+which tmux
+which byobu
+ip addr
+curl --version
+
+# validate setuptools is installed
+TMP_PYPKG="$(mktemp -d)"
+cat - > "${TMP_PYPKG}/setup.py" <<'EOM'
+from setuptools import setup
+setup(
+    name='mypackage',
+    version='0.0.1',
+    install_requires=[
+        'requests',
+    ],
+)
+EOM
+(cd "${TMP_PYPKG}" && python3 setup.py install)
+
+status-set active "Image is all good."

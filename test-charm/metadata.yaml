@@ -1,0 +1,3 @@
+name: ubuntu-test 
+description: a test charm for validating ubuntu base charm images
+summary: test charm
