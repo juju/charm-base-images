@@ -1,7 +1,6 @@
 # Copyright 2020 Canonical Ltd.
 # Licensed under the AGPLv3, see LICENCE file for details.
 
-pip>=7.0.0,<8.2.0
 charmhelpers>=0.20.15,<1.0.0
 charms.reactive>=0.1.0,<2.0.0
 kubernetes==10.0.*
