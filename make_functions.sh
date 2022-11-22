@@ -37,6 +37,7 @@ build_image() {
     echo "You must supply the docker buildx output to use for image ${image}"
     exit 1
   fi
+  is_local=${3-0}
 
   dockerfile=$(yq ".images.[\"${image}\"].dockerfile" < images.yaml)
   context=$(yq ".images.[\"${image}\"].context" < images.yaml)
@@ -44,12 +45,32 @@ build_image() {
   tags=$(yq -o=c ".images.[\"${image}\"].tags" < images.yaml)
   platforms=$(yq -o=c ".images.[\"${image}\"].platforms" < images.yaml)
   build_args=$(yq -o=t ".images.[\"${image}\"].build_args" < images.yaml)
-  echo "here"
+  
+  if [[ "${is_local}" -eq 1 ]]; then
+    cmd_platforms=""
+  else
+    cmd_platforms="--platform ${platforms}"
+  fi
 
   cmd_build_args=$(_build_args_builder "$build_args")
   cmd_tags=$(_tag_argument_builder "$reg_paths" "$tags")
 
   echo "Building ${image} for build args \"$build_args\" and platforms \"$platforms\""
-  docker buildx build --platform "$platforms" ${cmd_build_args} \
+  docker buildx build ${cmd_platforms} ${cmd_build_args} \
     -f "$dockerfile" "$context" ${cmd_tags} -o "$output"
+}
+
+microk8s_image_update() {
+  image=${1-""}
+  if [ -z "$image" ]; then
+    echo "You must supply the image to build in images.yaml"
+    exit 1
+  fi
+  reg_paths=$(yq -o=c ".images.[\"${image}\"].registry_paths" < images.yaml)
+  tags=$(yq -o=c ".images.[\"${image}\"].tags" < images.yaml)
+  for reg_path in ${reg_paths//,/ }; do
+    for tag in ${tags//,/ }; do
+      docker save "${reg_path}:${tag}" | sudo microk8s.ctr --namespace k8s.io image import -
+    done
+  done
 }

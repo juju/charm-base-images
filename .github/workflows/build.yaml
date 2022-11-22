@@ -13,8 +13,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y make jq
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq &&\
-          sudo chmod +x /usr/bin/yq
+          sudo snap install yq
       - id: set-matrix
         run: |
           echo "::set-output name=matrix::{\"image\": $(make images-json)}"
@@ -26,10 +25,14 @@ jobs:
       matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
+        with:
+          config-inline: |
+            [worker.oci]
+              max-parallelism = 1
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,9 +40,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y make
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.20.1/yq_linux_amd64 -O /usr/bin/yq &&\
-          sudo chmod +x /usr/bin/yq
+          sudo apt install -y make jq
+          sudo snap install yq
 
       - name: Make build image ${{ matrix.image }}
         run: |
