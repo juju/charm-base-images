@@ -1,11 +1,10 @@
 name: release
 on:
-  pull_request: {}
-  # push:
-  #   branches:
-  #     - "master"
-  # schedule:
-  #   - cron: "15 0 * * *"
+  push:
+    branches:
+      - "master"
+  schedule:
+    - cron: "15 0 * * *"
 jobs:
   generate-matrix:
     runs-on: ubuntu-latest
@@ -110,7 +109,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Push images
-      #   if: ${{ success() && github.ref == 'refs/heads/master' }}
-      #   run: |
-      #     IMAGES=${{ matrix.image }} make push
+      - name: Push images
+        if: ${{ success() && github.ref == 'refs/heads/master' }}
+        run: |
+          IMAGES=${{ matrix.image }} make push
