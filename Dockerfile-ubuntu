@@ -4,9 +4,9 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE
 
-# Python dependencies.
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends \
     python3-yaml \
     python3-pip \
     python3-distutils \
@@ -15,7 +15,7 @@ RUN apt-get update \
     # below apt dependencies are required by controller pod.
     iproute2 \
     curl \
-    && pip3 install --upgrade pip setuptools \
+	&& pip3 install --upgrade pip setuptools \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /root/.cache
 
