@@ -13,9 +13,8 @@ images:
       - linux/amd64
       - linux/ppc64le
       - linux/s390x
-      - linux/riscv64
     build_args:
-      - "BASE_IMAGE=ubuntu:22.04"
+      - "BASE_IMAGE=public.ecr.aws/ubuntu/ubuntu:22.04"
     juju_test_channel: 3.0/stable
     microk8s_test_channel: 1.25-strict/stable
     series: jammy
@@ -33,9 +32,8 @@ images:
       - linux/amd64
       - linux/ppc64le
       - linux/s390x
-      - linux/riscv64
     build_args:
-      - "BASE_IMAGE=ubuntu:20.04"
+      - "BASE_IMAGE=public.ecr.aws/ubuntu/ubuntu:20.04"
     juju_test_channel: 2.9/stable
     microk8s_test_channel: 1.25/stable
     series: focal
@@ -54,7 +52,7 @@ images:
       - linux/ppc64le
       - linux/s390x
     build_args:
-      - "BASE_IMAGE=ubuntu:18.04"
+      - "BASE_IMAGE=public.ecr.aws/ubuntu/ubuntu:18.04"
     juju_test_channel: 2.9/stable
     microk8s_test_channel: 1.25/stable
     series: bionic
