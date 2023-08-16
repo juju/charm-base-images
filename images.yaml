@@ -15,7 +15,7 @@ images:
       - linux/s390x
     build_args:
       - "BASE_IMAGE=public.ecr.aws/ubuntu/ubuntu:22.04"
-    juju_test_channel: 3.0/stable
+    juju_test_channel: 3.1/stable
     microk8s_test_channel: 1.25-strict/stable
     series: jammy
 
