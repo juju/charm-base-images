@@ -4,7 +4,8 @@ images:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
     registry_paths:
-      - jujusolutions/charm-base
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
     tags:
       - ubuntu-22.04
       - latest
@@ -16,7 +17,7 @@ images:
       - linux/riscv64
     build_args:
       - "BASE_IMAGE=ubuntu:22.04"
-    juju_test_channel: 3.0/stable
+    juju_test_channel: 3.1/stable
     microk8s_test_channel: 1.25-strict/stable
     series: jammy
 
@@ -25,7 +26,8 @@ images:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
     registry_paths:
-      - jujusolutions/charm-base
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
     tags:
       - ubuntu-20.04
     platforms:
@@ -45,7 +47,8 @@ images:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
     registry_paths:
-      - jujusolutions/charm-base
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
     tags:
       - ubuntu-18.04
     platforms:
