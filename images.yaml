@@ -4,7 +4,8 @@ images:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
     registry_paths:
-      - jujusolutions/charm-base
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
     tags:
       - ubuntu-22.04
       - latest
@@ -24,7 +25,8 @@ images:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
     registry_paths:
-      - jujusolutions/charm-base
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
     tags:
       - ubuntu-20.04
     platforms:
@@ -43,7 +45,8 @@ images:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
     registry_paths:
-      - jujusolutions/charm-base
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
     tags:
       - ubuntu-18.04
     platforms:
