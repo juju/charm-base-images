@@ -6,6 +6,7 @@ images:
     registry_paths:
       - docker.io/jujusolutions/charm-base
       - public.ecr.aws/juju/charm-base
+      - ghcr.io/juju/charm-base
     tags:
       - ubuntu-22.04
       - latest
@@ -27,6 +28,7 @@ images:
     registry_paths:
       - docker.io/jujusolutions/charm-base
       - public.ecr.aws/juju/charm-base
+      - ghcr.io/juju/charm-base
     tags:
       - ubuntu-20.04
     platforms:
@@ -47,6 +49,7 @@ images:
     registry_paths:
       - docker.io/jujusolutions/charm-base
       - public.ecr.aws/juju/charm-base
+      - ghcr.io/juju/charm-base
     tags:
       - ubuntu-18.04
     platforms:

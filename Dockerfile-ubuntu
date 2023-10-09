@@ -4,9 +4,13 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE
 
-RUN apt-get update
+# Add the juju user for rootless agents.
+# 170 uid/gid is sourced from juju/juju
+RUN groupadd --gid 170 juju
+RUN useradd --uid 170 --gid 170 --no-create-home --shell /usr/bin/bash juju
 
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     python3-yaml \
     python3-pip \
     python3-distutils \
