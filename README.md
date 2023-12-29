@@ -4,7 +4,7 @@
 This repository is used for bulding the base charm images used by
 [Juju](github.com/juju/juju/) in versions 2.9.0 onwards. Charm base images
 provide the foundation layer for which charms and their associated application
-code can excute on top of.
+code can execute on top of.
 
 ## Preerequisites
 - Docker 19.02 (requires buildx support with quemu for building multiple
