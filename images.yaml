@@ -1,5 +1,27 @@
 images:
   # LTS
+  ubuntu-24-04:
+    dockerfile: Dockerfile-ubuntu-noble
+    context: ubuntu-context
+    registry_paths:
+      - docker.io/jujusolutions/charm-base
+      - public.ecr.aws/juju/charm-base
+      - ghcr.io/juju/charm-base
+    tags:
+      - ubuntu-24.04
+      - latest
+    platforms:
+      - linux/arm64
+      - linux/amd64
+      - linux/ppc64le
+      - linux/s390x
+    build_args:
+      - "BASE_IMAGE=public.ecr.aws/ubuntu/ubuntu:24.04"
+    juju_test_channel: 3.5/stable
+    microk8s_test_channel: 1.30-strict/stable
+    series: noble
+
+  # LTS
   ubuntu-22-04:
     dockerfile: Dockerfile-ubuntu
     context: ubuntu-context
@@ -9,7 +31,6 @@ images:
       - ghcr.io/juju/charm-base
     tags:
       - ubuntu-22.04
-      - latest
     platforms:
       - linux/arm64
       - linux/amd64
