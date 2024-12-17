@@ -5,6 +5,7 @@ on:
       - "master"
   schedule:
     - cron: "15 0 * * *"
+  workflow_dispatch:
 jobs:
   generate-matrix:
     runs-on: ubuntu-latest
@@ -47,10 +48,6 @@ jobs:
           sudo apt install -y make jq
           sudo snap install yq
 
-      - name: Make build image ${{ matrix.image }}
-        run: |
-          IMAGES=${{ matrix.image }} make build
-
       - name: Install microk8s
         run: |
           microk8s_test_channel=$(yq ".images.[\"${{ matrix.image }}\"].microk8s_test_channel" < images.yaml)
@@ -63,6 +60,10 @@ jobs:
             microk8s_group=snap_microk8s
           fi
           sudo usermod -a -G "${microk8s_group}" $USER
+
+      - name: Make build image ${{ matrix.image }}
+        run: |
+          IMAGES=${{ matrix.image }} make build
 
       - name: Install juju snap
         run: |
@@ -80,7 +81,7 @@ jobs:
           if getent group snap_microk8s; then
             microk8s_group=snap_microk8s
           fi
-          sg "${microk8s_group}" <<'EOF'
+          $(echo sudo su $USER -G ${microk8s_group} -g $(groups | sed "s/\s/ -G /g")) <<'EOF'
             series=$(yq ".images.[\"${{ matrix.image }}\"].series" < images.yaml)
             juju bootstrap microk8s
             juju status -m controller
