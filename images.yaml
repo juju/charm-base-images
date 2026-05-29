@@ -39,7 +39,7 @@ images:
     build_args:
       - "BASE_IMAGE=public.ecr.aws/ubuntu/ubuntu:24.04"
     juju_test_channel: 3/stable
-    microk8s_test_channel: 1.30-strict/stable
+    microk8s_test_channel: 1.34-strict/stable
     series: noble
 
   # LTS
