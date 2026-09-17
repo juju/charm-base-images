@@ -84,6 +84,9 @@ jobs:
           fi
           $(echo sudo su $USER -G ${microk8s_group} -g $(groups | sed "s/\s/ -G /g")) <<'EOF'
             series=$(yq ".images.[\"${{ matrix.image }}\"].series" < images.yaml)
+            tag=$(yq ".images.[\"${{ matrix.image }}\"].tags[0]" < images.yaml)
+            version="${tag#ubuntu-}"
+            yq -n ".bases[0].name = \"ubuntu\" | .bases[0].channel = \"${version}/stable\" | .bases[0].architectures[0] = \"amd64\"" > ./test-charm/manifest.yaml
             juju bootstrap microk8s
             juju status -m controller
             juju add-model test
