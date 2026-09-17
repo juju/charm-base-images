@@ -6,7 +6,7 @@ _build_args_builder() {
 
   output=""
   for build_arg in ${build_args}; do
-    output="${output} --build-arg ${build_args}"
+    output="${output} --build-arg ${build_arg}"
   done
 
   echo "$output"
