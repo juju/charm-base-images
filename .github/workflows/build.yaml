@@ -88,7 +88,22 @@ jobs:
             juju add-model test
             juju deploy ./test-charm --series "${series}"
 
+            timeout=120
+            start=$(date +%s)
             until juju status | grep -q "Image is all good."; do
+              elapsed=$(( $(date +%s) - start ))
+              if [ "$elapsed" -ge "$timeout" ]; then
+                echo "Timed out waiting for deployment after ${timeout}s"
+                echo "=== juju status ==="
+                juju status --format yaml
+                echo "=== juju debug-log (last 100 lines) ==="
+                juju debug-log --replay -n 100 || true
+                echo "=== pod events ==="
+                microk8s.kubectl -n test get events --sort-by=.lastTimestamp || true
+                echo "=== pod logs ==="
+                microk8s.kubectl -n test logs ubuntu-test-0 -c charm --tail=100 || true
+                exit 1
+              fi
               sleep 1
               juju status
             done
